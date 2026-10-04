@@ -24,17 +24,8 @@ const counts = report.metadata?.vulnerabilities ?? {};
 const serious = (counts.high ?? 0) + (counts.critical ?? 0);
 console.log(`${name}:`, counts);
 
-if (serious > 0) {
-  const packages = Object.values(report.vulnerabilities ?? {})
-    .filter((v) => v.severity === "high" || v.severity === "critical")
-    .map((v) => `• \`${v.name}\` (${v.severity})${v.fixAvailable ? "" : " — sem correção disponível"}`)
-    .slice(0, 10);
-  await notifySlack(
-    `:lock: *${name}*: ${counts.critical ?? 0} crítica(s), ${counts.high ?? 0} alta(s) em dependências de produção.\n${packages.join("\n")}\nCorrigir com \`npm audit fix\` no projeto.`,
-  );
-}
-
-// Guarda o resultado no dashboard do saas-ops, quando configurado.
+// Guarda o resultado no dashboard do saas-ops antes do Slack, para uma
+// falha do Slack não fazer perder o registo.
 if (process.env.SAAS_OPS_URL && process.env.CRON_SECRET) {
   const packages = Object.values(report.vulnerabilities ?? {})
     .filter((v) => v.severity === "high" || v.severity === "critical")
@@ -46,4 +37,14 @@ if (process.env.SAAS_OPS_URL && process.env.CRON_SECRET) {
     signal: AbortSignal.timeout(20_000),
   });
   console.log(`saas-ops: HTTP ${response.status}`);
+}
+
+if (serious > 0) {
+  const packages = Object.values(report.vulnerabilities ?? {})
+    .filter((v) => v.severity === "high" || v.severity === "critical")
+    .map((v) => `• \`${v.name}\` (${v.severity})${v.fixAvailable ? "" : " — sem correção disponível"}`)
+    .slice(0, 10);
+  await notifySlack(
+    `:lock: *${name}*: ${counts.critical ?? 0} crítica(s), ${counts.high ?? 0} alta(s) em dependências de produção.\n${packages.join("\n")}\nCorrigir com \`npm audit fix\` no projeto.`,
+  );
 }
