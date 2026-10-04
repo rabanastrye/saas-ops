@@ -1,0 +1,22 @@
+[
+  {
+    "name": "agendapro",
+    "url": "https://agenda-pro.online/api/health",
+    "repo": "rabanastrye/agendapro"
+  },
+  {
+    "name": "orcapro",
+    "url": "https://orcapro-two.vercel.app/",
+    "repo": "rabanastrye/orcapro"
+  },
+  {
+    "name": "gym-sales",
+    "url": "https://app.gym-sales.com/",
+    "repo": "rabanastrye/gym-sales-os"
+  },
+  {
+    "name": "ritmo",
+    "url": "https://ritmo-self-sigma.vercel.app/",
+    "repo": "rabanastrye/Ritmo"
+  }
+]

@@ -1,0 +1,38 @@
+name: audit
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      projects: ${{ steps.read.outputs.projects }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        run: echo "projects=$(jq -c '[.[] | {name, repo}]' projects.json)" >> "$GITHUB_OUTPUT"
+
+  audit:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJson(needs.list.outputs.projects) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.project.repo }}
+          token: ${{ secrets.REPOS_TOKEN }}
+          path: target
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/audit.mjs "${{ matrix.project.name }}" target
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
