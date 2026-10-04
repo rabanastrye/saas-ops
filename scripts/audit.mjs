@@ -33,3 +33,17 @@ if (serious > 0) {
     `:lock: *${name}*: ${counts.critical ?? 0} crítica(s), ${counts.high ?? 0} alta(s) em dependências de produção.\n${packages.join("\n")}\nCorrigir com \`npm audit fix\` no projeto.`,
   );
 }
+
+// Guarda o resultado no dashboard do saas-ops, quando configurado.
+if (process.env.SAAS_OPS_URL && process.env.CRON_SECRET) {
+  const packages = Object.values(report.vulnerabilities ?? {})
+    .filter((v) => v.severity === "high" || v.severity === "critical")
+    .map((v) => `${v.name} (${v.severity})`);
+  const response = await fetch(`${process.env.SAAS_OPS_URL}/api/report/audit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.CRON_SECRET}` },
+    body: JSON.stringify({ project: name, counts, packages }),
+    signal: AbortSignal.timeout(20_000),
+  });
+  console.log(`saas-ops: HTTP ${response.status}`);
+}

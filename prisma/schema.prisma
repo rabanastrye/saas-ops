@@ -1,0 +1,70 @@
+// saas-ops - histórico do monitor central.
+//
+// Os projetos vêm de projects.json, na raiz do repo; a tabela SaaSProject
+// é sincronizada a cada orquestração. Estados e severidades são String,
+// validados pelos tipos em src/server/types.ts.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SaaSProject {
+  id        String   @id // o "name" de projects.json
+  url       String
+  repo      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  health    HealthSnapshot[]
+  metrics   MetricsSnapshot[]
+  incidents Incident[]
+}
+
+model HealthSnapshot {
+  id         String   @id @default(cuid())
+  projectId  String
+  up         Boolean
+  httpStatus Int?
+  latencyMs  Int
+  error      String?
+  checkedAt  DateTime @default(now())
+
+  project SaaSProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, checkedAt])
+}
+
+// Série temporal genérica: latency_ms, vuln_critical, vuln_high, ...
+model MetricsSnapshot {
+  id         String   @id @default(cuid())
+  projectId  String
+  name       String
+  value      Float
+  recordedAt DateTime @default(now())
+
+  project SaaSProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, name, recordedAt])
+}
+
+// kind: "downtime" | "vulnerabilities". Fica aberto até resolvedAt.
+model Incident {
+  id         String    @id @default(cuid())
+  projectId  String
+  kind       String
+  severity   String
+  title      String
+  detail     String?
+  openedAt   DateTime  @default(now())
+  resolvedAt DateTime?
+
+  project SaaSProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, kind, resolvedAt])
+  @@index([openedAt])
+}

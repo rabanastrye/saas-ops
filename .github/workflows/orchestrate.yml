@@ -1,0 +1,37 @@
+name: orchestrate
+
+# Guarda o histórico de saúde de todos os SaaS no dashboard saas-ops.
+# Os alertas de queda continuam a ser do workflow uptime, que não depende
+# do dashboard estar no ar.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+    # Uma vez por dia, com resumo no Slack.
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+    inputs:
+      summary:
+        description: "Enviar resumo para o Slack"
+        type: boolean
+        default: true
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Chamar /api/orchestrate
+        env:
+          SAAS_OPS_URL: ${{ secrets.SAAS_OPS_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SUMMARY: ${{ github.event.schedule == '0 8 * * *' || (github.event_name == 'workflow_dispatch' && inputs.summary) }}
+        run: |
+          query=""
+          if [ "$SUMMARY" = "true" ]; then query="?summary=1"; fi
+          status=$(curl -sS -o response.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$SAAS_OPS_URL/api/orchestrate$query")
+          cat response.json
+          echo
+          test "$status" = "200"

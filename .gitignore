@@ -1,2 +1,13 @@
 uptime-state.json
 node_modules/
+.env
+.env*.local
+.next/
+next-env.d.ts
+src/generated/
+.vercel
+*.tsbuildinfo
+.codegraph/
+
+.vercel
+.env*

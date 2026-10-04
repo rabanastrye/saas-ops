@@ -36,3 +36,5 @@ jobs:
       - run: node scripts/audit.mjs "${{ matrix.project.name }}" target
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SAAS_OPS_URL: ${{ secrets.SAAS_OPS_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
