@@ -19,13 +19,16 @@ export async function POST(request: Request) {
 
   const results = await orchestrate();
 
+  const up = results.filter((r) => r.up).length;
+  const lines = results.map(
+    (r) => `${r.up ? ":large_green_circle:" : ":red_circle:"} *${r.project}* ${r.latencyMs}ms${r.error ? ` (${r.error})` : ""}`,
+  );
+  // O workflow envia este texto com o webhook guardado no GitHub;
+  // ?summary=1 envia daqui, se SLACK_WEBHOOK_URL estiver na Vercel.
+  const summary = `:bar_chart: *saas-ops*: ${up}/${results.length} projetos no ar\n${lines.join("\n")}`;
   if (new URL(request.url).searchParams.get("summary") === "1") {
-    const up = results.filter((r) => r.up).length;
-    const lines = results.map(
-      (r) => `${r.up ? ":large_green_circle:" : ":red_circle:"} *${r.project}* ${r.latencyMs}ms${r.error ? ` (${r.error})` : ""}`,
-    );
-    await notifySlack(`:bar_chart: *saas-ops*: ${up}/${results.length} projetos no ar\n${lines.join("\n")}`);
+    await notifySlack(summary);
   }
 
-  return NextResponse.json({ ok: true, results });
+  return NextResponse.json({ ok: true, summary, results });
 }
