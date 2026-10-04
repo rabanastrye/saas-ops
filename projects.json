@@ -18,5 +18,10 @@
     "name": "ritmo",
     "url": "https://ritmo-self-sigma.vercel.app/",
     "repo": "rabanastrye/Ritmo"
+  },
+  {
+    "name": "saas-ops",
+    "url": "https://saas-ops.vercel.app/api/health",
+    "repo": "rabanastrye/saas-ops"
   }
 ]
