@@ -11,7 +11,7 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "uptime": "node scripts/uptime.mjs",
-    "orchestrate": "node scripts/orchestrate.mjs"
+    "orchestrate": "node scripts/orchestrate.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

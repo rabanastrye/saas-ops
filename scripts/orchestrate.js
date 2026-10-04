@@ -1,56 +1,38 @@
-const axios = require('axios');
+// Corre a orquestração à mão, como o workflow orchestrate faz a cada 15 min:
+// verifica todos os projetos de projects.json e guarda o histórico no dashboard.
+//
+// Uso: npm run orchestrate            (lê SAAS_OPS_URL e CRON_SECRET do ambiente ou do .env)
+//      npm run orchestrate -- --slack (envia também o resumo para o Slack)
 
-// Projetos a monitorizar
-const projects = [
-  { name: 'agendapro', url: 'https://agendapro.vercel.app' },
-  { name: 'orcapro', url: 'https://orcapro.vercel.app' },
-  { name: 'gym-sales', url: 'https://gym-sales.vercel.app' },
-  { name: 'saas-ops', url: 'https://saas-ops.vercel.app' },
-];
+require("dotenv/config");
 
-async function orchestrate() {
-  console.log('?? Orquestrador iniciado...');
+const url = process.env.SAAS_OPS_URL ?? "https://saas-ops.vercel.app";
+const secret = process.env.CRON_SECRET;
+const slack = process.argv.includes("--slack");
 
-  try {
-    // Dispara agentes em paralelo
-    const results = await Promise.allSettled(
-      projects.map(async (project) => {
-        try {
-          const response = await axios.post(
-            `${project.url}/api/agents/orchestrate`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${process.env.AGENT_SECRET_KEY}`,
-              },
-              timeout: 30000,
-            }
-          );
-          console.log(`? ${project.name}: ${response.status}`);
-          return { project: project.name, status: response.status, data: response.data };
-        } catch (error) {
-          console.error(`? ${project.name}: ${error.message}`);
-          return { project: project.name, status: 'error', error: error.message };
-        }
-      })
-    );
-
-    // Resumo
-    const summary = results.map((r) => r.value);
-    console.log('\n?? Resumo:', JSON.stringify(summary, null, 2));
-
-    // Notificar Slack
-    if (process.env.SLACK_WEBHOOK_URL) {
-      await axios.post(process.env.SLACK_WEBHOOK_URL, {
-        text: `? Orquestra��o conclu�da\n${summary.map((r) => `� ${r.project}: ${r.status}`).join('\n')}`,
-      });
-    }
-
-    process.exit(0);
-  } catch (error) {
-    console.error('? Erro:', error.message);
+async function main() {
+  if (!secret) {
+    console.error("CRON_SECRET não está definido.");
     process.exit(1);
+  }
+
+  const response = await fetch(`${url}/api/orchestrate${slack ? "?summary=1" : ""}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret}` },
+    signal: AbortSignal.timeout(60_000),
+  });
+  const body = await response.json().catch(() => null);
+  if (!response.ok || !body) {
+    console.error(`saas-ops respondeu ${response.status}.`);
+    process.exit(1);
+  }
+
+  for (const r of body.results) {
+    console.log(`${r.up ? "UP  " : "DOWN"} ${r.project} ${r.latencyMs}ms ${r.error ?? ""}`);
   }
 }
 
-orchestrate();
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});
