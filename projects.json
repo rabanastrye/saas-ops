@@ -11,7 +11,7 @@
   },
   {
     "name": "gym-sales",
-    "url": "https://app.gym-sales.com/",
+    "url": "https://app.gym-sales.com/api/health",
     "repo": "rabanastrye/gym-sales-os"
   },
   {
