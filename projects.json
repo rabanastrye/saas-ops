@@ -6,7 +6,7 @@
   },
   {
     "name": "orcapro",
-    "url": "https://orcapro-two.vercel.app/",
+    "url": "https://orcapro-two.vercel.app/api/health",
     "repo": "rabanastrye/orcapro"
   },
   {
