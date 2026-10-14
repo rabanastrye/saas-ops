@@ -5,6 +5,11 @@
     "repo": "rabanastrye/agendapro"
   },
   {
+    "name": "agendapro-cron",
+    "url": "https://agenda-pro.online/api/health/cron",
+    "repo": "rabanastrye/agendapro"
+  },
+  {
     "name": "orcapro",
     "url": "https://orcapro-two.vercel.app/api/health",
     "repo": "rabanastrye/orcapro"
