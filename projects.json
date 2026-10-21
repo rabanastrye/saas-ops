@@ -28,5 +28,10 @@
     "name": "saas-ops",
     "url": "https://saas-ops.vercel.app/api/health",
     "repo": "rabanastrye/saas-ops"
+  },
+  {
+    "name": "liftplan",
+    "url": "https://liftplan-web-production.up.railway.app/api/health",
+    "repo": "rabanastrye/liftplan"
   }
 ]
