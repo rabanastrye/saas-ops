@@ -33,5 +33,10 @@
     "name": "bio-timeline",
     "url": "https://bio-timeline.vercel.app/api/health",
     "repo": "rabanastrye/bio-timeline"
+  },
+  {
+    "name": "questday",
+    "url": "https://questday-app.vercel.app/api/health",
+    "repo": "rabanastrye/questday"
   }
 ]
