@@ -28,5 +28,10 @@
     "name": "liftplan",
     "url": "https://liftplan-web-production.up.railway.app/api/health",
     "repo": "rabanastrye/liftplan"
+  },
+  {
+    "name": "bio-timeline",
+    "url": "https://bio-timeline.vercel.app/api/health",
+    "repo": "rabanastrye/bio-timeline"
   }
 ]
