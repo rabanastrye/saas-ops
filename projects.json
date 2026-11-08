@@ -38,5 +38,10 @@
     "name": "questday",
     "url": "https://questday-app.vercel.app/api/health",
     "repo": "rabanastrye/questday"
+  },
+  {
+    "name": "flyscout",
+    "url": "https://flyscout-ivory.vercel.app/api/health",
+    "repo": "rabanastrye/flyscout"
   }
 ]
