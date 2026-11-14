@@ -43,5 +43,10 @@
     "name": "flyscout",
     "url": "https://flyscout-ivory.vercel.app/api/health",
     "repo": "rabanastrye/flyscout"
+  },
+  {
+    "name": "morfeu",
+    "url": "https://morfeu-mu.vercel.app/api/health",
+    "repo": "rabanastrye/morfeu"
   }
 ]
