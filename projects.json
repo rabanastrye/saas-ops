@@ -48,5 +48,10 @@
     "name": "morfeu",
     "url": "https://morfeu-mu.vercel.app/api/health",
     "repo": "rabanastrye/morfeu"
+  },
+  {
+    "name": "jd-command",
+    "url": "https://jd-command.vercel.app/api/health",
+    "repo": "rabanastrye/jd-command"
   }
 ]
