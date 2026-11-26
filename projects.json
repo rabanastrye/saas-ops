@@ -58,5 +58,10 @@
     "name": "midas",
     "url": "https://midas-roan.vercel.app/api/health",
     "repo": "rabanastrye/midas"
+  },
+  {
+    "name": "ev-command-center",
+    "url": "https://ev-command-center.vercel.app/api/health",
+    "repo": "rabanastrye/ev-command-center"
   }
 ]
