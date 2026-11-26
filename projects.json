@@ -53,5 +53,10 @@
     "name": "jd-command",
     "url": "https://jd-command.vercel.app/api/health",
     "repo": "rabanastrye/jd-command"
+  },
+  {
+    "name": "midas",
+    "url": "https://midas-roan.vercel.app/api/health",
+    "repo": "rabanastrye/midas"
   }
 ]
